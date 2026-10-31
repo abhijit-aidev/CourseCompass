@@ -16,7 +16,7 @@ function loadEnv() {
 }
 loadEnv();
 const PORT = Number(process.env.PORT || 4173);
-const HOST = process.env.HOST || '127.0.0.1';
+const HOST = process.env.HOST || '0.0.0.0';
 const API_KEY = process.env.TINYFISH_API_KEY;
 const platforms = [
   ['Coursera', 'https://www.coursera.org/search?query='],
