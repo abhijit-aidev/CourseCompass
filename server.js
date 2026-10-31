@@ -79,7 +79,7 @@ async function research(req, res) {
       while (!disconnected) {
         const { value, done } = await reader.read(); if (done) break;
         buffer += decoder.decode(value, { stream: true });
-        const chunks = buffer.split('\n\n'); buffer = chunks.pop() || '';
+        const chunks = buffer.replace(/\r\n/g, '\n').split('\n\n'); buffer = chunks.pop() || '';
         for (const chunk of chunks) {
           const line = chunk.split('\n').find(x => x.startsWith('data:'));
           if (!line) continue;
