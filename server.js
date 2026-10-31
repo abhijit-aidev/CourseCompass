@@ -87,7 +87,15 @@ async function research(req, res) {
             const event = JSON.parse(line.slice(5).trim());
             if (event.type === 'PROGRESS') emit({ type: 'stage', step: 4, platform, message: event.purpose || `Extracting course information from ${platform}.` });
             if (event.type === 'COMPLETE') {
-              const result = event.result?.courses ? event.result : event.result?.result || event.result;
+              let result = event.result;
+              for (let i = 0; i < 3 && result?.result !== undefined; i++) {
+                result = result.result;
+              }
+              if (typeof result === 'string') {
+                try {
+                  result = JSON.parse(result.replace(/^```json\s*|\s*```$/g, '').trim());
+                } catch {}
+              }
               const courses = Array.isArray(result) ? result : result?.courses || [];
               courses.forEach(c => { const normalized = safeCourse({ ...c, platform: c.platform || platform, source_url: c.source_url || c.course_url, research_timestamp: new Date().toISOString() }); if (normalized && normalized.course_url !== 'Not disclosed') allCourses.push(normalized); });
               emit({ type: 'source', platform, url: target, status: courses.length ? 'complete' : 'no_results', count: courses.length });
